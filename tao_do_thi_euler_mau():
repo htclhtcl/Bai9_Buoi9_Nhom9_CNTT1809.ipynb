@@ -1,0 +1,116 @@
+import math
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def tao_do_thi_euler_mau():
+    """Tao mot do thi don gian co chu trinh Euler."""
+    graph_euler = {
+        0: [1, 2],
+        1: [0, 3],
+        2: [0, 3],
+        3: [1, 2]
+    }
+    print("Do thi mau (danh sach ke): - tao_do_thi_euler_mau.py:13")
+    for node, neighbors in graph_euler.items():
+        print(f"Dinh {node}: {neighbors} - tao_do_thi_euler_mau.py:15")
+    return graph_euler
+
+def ve_do_thi(graph, title="Do thi"):
+    """Ve do thi su dung NetworkX va Matplotlib."""
+    G = nx.Graph(graph)
+    pos = nx.spring_layout(G, seed=42)  # Bo cuc co dinh de nhin ro hon
+    
+    plt.figure(figsize=(6, 5))
+    nx.draw_networkx_nodes(G, pos, node_size=700)
+    nx.draw_networkx_edges(G, pos, width=2.0)
+    nx.draw_networkx_labels(G, pos, font_size=20, font_family='sans-serif')
+    plt.title(title)
+    plt.show()
+
+def tinh_bac_cac_dinh(graph):
+    """Tinh bac cua moi dinh trong do thi."""
+    bac_dinh = {}
+    for node in graph:
+        bac_dinh[node] = len(graph[node])
+    return bac_dinh
+
+def kiem_tra_lien_thong(graph):
+    """Kiem tra xem do thi co lien thong khong."""
+    if not graph:
+        return True
+    
+    start_node = next(iter(graph))
+    visited = set()
+    stack = [start_node]
+    
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph[node]:
+                if neighbor in graph:
+                    stack.append(neighbor)
+    
+    return len(visited) == len(graph)
+
+def kiem_tra_do_thi_euler(graph):
+    """Kiem tra dieu kien de co chu trinh Euler."""
+    if not kiem_tra_lien_thong(graph):
+        print("=> Do thi KHONG LIEN THONG. - tao_do_thi_euler_mau.py:59")
+        return False
+    
+    bac_dinh = tinh_bac_cac_dinh(graph)
+    print("Bac cua cac dinh: - tao_do_thi_euler_mau.py:63")
+    for node, bac in bac_dinh.items():
+        print(f"Dinh {node}: Bac {bac} - tao_do_thi_euler_mau.py:65")
+        if bac % 2 != 0:
+            print("=> Do thi KHONG phai do thi Euler (co dinh bac le). - tao_do_thi_euler_mau.py:67")
+            return False
+    
+    print("=> Do thi LIEN THONG va tat ca dinh deu bac chan. - tao_do_thi_euler_mau.py:70")
+    return True
+
+# --- Phan chay thu da duoc sua doi ---
+
+# 1. Ve do thi Euler mau ban dau
+my_graph_euler = tao_do_thi_euler_mau()
+ve_do_thi(my_graph_euler, title="Do thi Euler mau")
+if kiem_tra_do_thi_euler(my_graph_euler):
+    print("Do thi nay co the co chu trinh Euler. - tao_do_thi_euler_mau.py:79")
+else:
+    print("Do thi nay khong co chu trinh Euler. - tao_do_thi_euler_mau.py:81")
+
+print("\n - tao_do_thi_euler_mau.py:83" + "="*50 + "\n")
+
+# 2. Them dinh co lap (dinh 4)
+print("a. Chay lai kiem tra voi do thi co dinh co lap - tao_do_thi_euler_mau.py:86")
+my_graph_with_isolated_node = {
+    0: [1, 2],
+    1: [0, 3],
+    2: [0, 3],
+    3: [1, 2],
+    4: []
+}
+print("Do thi sau khi them dinh co lap (dinh 4): - tao_do_thi_euler_mau.py:94")
+for node, neighbors in my_graph_with_isolated_node.items():
+    print(f"Dinh {node}: {neighbors} - tao_do_thi_euler_mau.py:96")
+
+ve_do_thi(my_graph_with_isolated_node, title="Do thi voi dinh co lap")
+is_euler_with_isolated_node = kiem_tra_do_thi_euler(my_graph_with_isolated_node)
+print(f"Do thi nay co phai do thi Euler khong? {is_euler_with_isolated_node} - tao_do_thi_euler_mau.py:100")
+print("\n - tao_do_thi_euler_mau.py:101" + "="*50 + "\n")
+
+# 3. Kiem tra do thi moi
+print("b. Chay lai kiem tra voi do thi 0:[1], 1:[0, 2], 2:[1] - tao_do_thi_euler_mau.py:104")
+my_graph_new = {
+    0: [1],
+    1: [0, 2],
+    2: [1]
+}
+print("Do thi moi: - tao_do_thi_euler_mau.py:110")
+for node, neighbors in my_graph_new.items():
+    print(f"Dinh {node}: {neighbors} - tao_do_thi_euler_mau.py:112")
+
+ve_do_thi(my_graph_new, title="Do thi voi dinh bac le")
+is_euler_new = kiem_tra_do_thi_euler(my_graph_new)
+print(f"Do thi nay co phai do thi Euler khong? {is_euler_new} - tao_do_thi_euler_mau.py:116")
